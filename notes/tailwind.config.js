@@ -12,7 +12,7 @@ export default {
     require('daisyui'),
   ],
   daisyui: {
-    themes: ["cupcake", "luxury"],
+    themes: ["cupcake", "dim"],
   },
 }
 

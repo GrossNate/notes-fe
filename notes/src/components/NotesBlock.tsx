@@ -1,26 +1,53 @@
 import { NotesBlockProps, Note } from "../types";
+import axios, { AxiosResponse, AxiosError } from "axios";
+const baseUrl = "http://localhost:3000/api/notes";
 
-const NoteRow = ({ note }: {note: Note }) => {
+axios.defaults.withCredentials = true;
+
+const NoteRow = ({ note, deleteLocalNote }: { note: Note, deleteLocalNote: (noteIdToDelete: Note["id"]) => void }) => {
+  const handleDeleteNote = async () => {
+    const confirmDelete = confirm("Really delete?");
+    if (confirmDelete) {
+      const response: AxiosResponse | AxiosError = await axios.delete(`${baseUrl}/${note.id}`).catch(e => e);
+      if (response.status === 204) {
+        deleteLocalNote(note.id);
+      } else {
+        alert("Could not delete.");
+      }
+    }
+  }
   return (
     <tr className="hover">
-      <td>{note.content}</td>
-      <td>{note.created_timestamp}</td>
+      <td>
+        {
+          (note.content.length <= 50) ?
+            note.content :
+            note.content.slice(0, 47).concat("...")
+        }
+      </td>
+      <td>{new Date(Date.parse(note.created_timestamp)).toLocaleString("en-US", { dateStyle: "short", timeStyle: "short" })}</td>
+      <td>
+        <button className="btn btn-error btn-xs" onClick={handleDeleteNote}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z" /></svg>
+        </button>
+      </td>
     </tr>
   );
 }
 
-export const NotesBlock: React.FC<NotesBlockProps> = ({ notes }) => {
+export const NotesBlock: React.FC<NotesBlockProps> = ({ notes, isLoggedIn, deleteLocalNote }) => {
   return (
-    <div>
+    <div className={isLoggedIn ? "" : "hidden"}>
       <table className="table table-zebra">
         <thead>
           <tr>
             <th>Note preview</th>
             <th>Created</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {notes.map(note => (<NoteRow key={note.id} note={note}/>))}
+          {notes.map(note => (<NoteRow key={note.id} note={note} deleteLocalNote={deleteLocalNote} />))}
         </tbody>
       </table>
     </div>

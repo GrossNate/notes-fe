@@ -11,14 +11,22 @@ import { useCookies } from 'react-cookie';
 axios.defaults.withCredentials = true;
 
 function App() {
-  const [cookies, setCookie, removeCookie] = useCookies(['username', 'token']);
-  const [userToken, setUserToken] = useState<UserToken>({ username: "", token: "" });
+  const [cookies, setCookie] = useCookies(['username', 'token']);
+  // const [userToken, setUserToken] = useState<UserToken>({ username: "", token: "" });
   const [notes, setNotes] = useState<Note[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  console.log(cookies.username);
   const toggleDarkMode = () => {setDarkMode(!darkMode)};
   
+  const appendLocalNote = (noteToAppend: Note) => {
+    setNotes(notes.concat(noteToAppend));
+  };
+  
+  const deleteLocalNote = (noteIdToDelete: Note["id"]) => {
+    setNotes(notes.filter(note => note.id !== noteIdToDelete));
+  }
+
   useEffect(() => {
     const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleThemeChange = () => {
@@ -34,8 +42,9 @@ function App() {
   }, []);
   
   useEffect(() => {
-    if (userToken.username === "") {
+    if (cookies.username === "" || cookies.username === undefined) {
       setNotes([]);
+      setIsLoggedIn(false);
     } else {
       const updateNotes = async () => {
         const response: AxiosResponse<Note[]> | AxiosError = await axios.get("http://localhost:3000/api/notes").catch(error => error);
@@ -46,8 +55,9 @@ function App() {
         }
       };
       void updateNotes();
+      setIsLoggedIn(true);
     }
-  }, [userToken.username]);
+  }, [cookies.username]);
   
   return (
     <div className="grid grid-rows-auto prose">
@@ -58,15 +68,15 @@ function App() {
         <div>
           <label className="flex justify-end cursor-pointer gap-2">
             <span className='label-text'>light/dark theme</span>
-            <input type="checkbox" value="luxury" checked={darkMode} className="toggle theme-controller" onChange={toggleDarkMode}/>
+            <input type="checkbox" value="dim" checked={darkMode} className="toggle theme-controller" onChange={toggleDarkMode}/>
           </label>
         </div>
       </div>
       <div>
-        <LoginBlock setUserToken={setUserToken} />
-        <LogoutBlock userToken={userToken} setUserToken={setUserToken} />
-        <NotesBlock notes={notes} />
-        <AddNoteBlock userToken={userToken} />
+        <LoginBlock isLoggedIn={isLoggedIn} />
+        <LogoutBlock userToken={cookies} setUserToken={(val) => {setCookie("username", val)}} isLoggedIn={isLoggedIn} />
+        <NotesBlock notes={notes} isLoggedIn={isLoggedIn} deleteLocalNote={deleteLocalNote} />
+        <AddNoteBlock userToken={cookies} appendLocalNote={appendLocalNote} isLoggedIn={isLoggedIn} />
       </div>
     </div>
   )
