@@ -1,8 +1,10 @@
 import { LogoutBlockProps } from "../types";
-import axios, { AxiosResponse, AxiosError } from "axios";
-const baseUrl = "http://localhost:3000/api/user/logout";
+import axios from "axios";
+import { BASE_URL } from "../config";
 
-export const LogoutBlock: React.FC<LogoutBlockProps> = ({ userToken, setUserToken, isLoggedIn, setIsAddModalOpen }) => {
+const baseUrl = `${BASE_URL}/user/logout`;
+
+export const LogoutBlock: React.FC<LogoutBlockProps> = ({ userToken, setUserToken, isLoggedIn }) => {
 
   const handleLogout = async (event: React.MouseEvent) => {
     event.preventDefault();

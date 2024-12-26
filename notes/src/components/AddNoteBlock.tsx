@@ -1,20 +1,19 @@
 import { AddNoteBlockProps } from "../types";
 import { useState } from "react";
-import axios from "axios";
-import { AxiosResponse } from "axios";
-import { AxiosError } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import { BASE_URL } from "../config";
 
 axios.defaults.withCredentials = true;
 
-const baseUrl = "http://localhost:3000/api/notes";
+const baseUrl = `${BASE_URL}/notes`;
 
 export const AddNoteBlock: React.FC<AddNoteBlockProps> = ({ userToken, appendLocalNote, isAddModalOpen, setIsAddModalOpen }) => {
   const [content, setContent] = useState<string>("");
 
   const handleAdd = async (event: React.MouseEvent) => {
     event.preventDefault();
-    const response: AxiosResponse | AxiosError = await axios.post(baseUrl, { content, username: userToken.username }).catch(e => e);
+    const response: AxiosResponse = await axios.post(baseUrl, { content, username: userToken.username }).catch(e => e);
     if (response.status === 201) {
       // console.log(response);
       appendLocalNote(response.data)
@@ -24,7 +23,7 @@ export const AddNoteBlock: React.FC<AddNoteBlockProps> = ({ userToken, appendLoc
       alert("Could not add note.");
     }
   };
-  
+
   const handleClose = (val = false) => {
     setContent("");
     setIsAddModalOpen(val);

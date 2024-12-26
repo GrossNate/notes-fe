@@ -1,18 +1,17 @@
 import { EditNoteBlockProps } from "../types";
-import axios from "axios";
-import { AxiosResponse } from "axios";
-import { AxiosError } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import { BASE_URL } from "../config";
 
 axios.defaults.withCredentials = true;
 
-const baseUrl = "http://localhost:3000/api/notes";
+const baseUrl = `${BASE_URL}/notes`;
 
-export const EditNoteBlock: React.FC<EditNoteBlockProps> = ({updateLocalNote, editorNote, setEditorNote, isEditModalOpen, setIsEditModalOpen}) => {
+export const EditNoteBlock: React.FC<EditNoteBlockProps> = ({ updateLocalNote, editorNote, setEditorNote, isEditModalOpen, setIsEditModalOpen }) => {
 
   const handleEdit = async (event: React.MouseEvent) => {
     event.preventDefault();
-    const response: AxiosResponse | AxiosError = await axios.put(`${baseUrl}/${editorNote.id}`, editorNote).catch(e => e);
+    const response: AxiosResponse = await axios.put(`${baseUrl}/${editorNote.id}`, editorNote).catch(e => e);
     if (response.status === 201) {
       // console.log(response);
       updateLocalNote(response.data)
@@ -21,9 +20,9 @@ export const EditNoteBlock: React.FC<EditNoteBlockProps> = ({updateLocalNote, ed
       alert("Could not update note.");
     }
   };
-  
+
   const handleClose = (val = false) => {
-    setEditorNote({id: "", username: "", content: "", created_timestamp: ""});
+    setEditorNote({ id: "", username: "", content: "", created_timestamp: "" });
     setIsEditModalOpen(val);
   };
 
@@ -40,7 +39,7 @@ export const EditNoteBlock: React.FC<EditNoteBlockProps> = ({updateLocalNote, ed
                     Add note
                   </DialogTitle>
                   <div className="mt-2 w-full">
-                    <textarea name="content" value={editorNote.content} onChange={e => setEditorNote({...editorNote, content: e.target.value})} placeholder="note content" className="textarea textarea-bordered textarea-lg w-full" />
+                    <textarea name="content" value={editorNote.content} onChange={e => setEditorNote({ ...editorNote, content: e.target.value })} placeholder="note content" className="textarea textarea-bordered textarea-lg w-full" />
                   </div>
                 </div>
               </div>

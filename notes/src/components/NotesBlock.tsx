@@ -1,7 +1,9 @@
 import { ReactEventHandler } from "react";
 import { NotesBlockProps, Note } from "../types";
 import axios, { AxiosResponse, AxiosError } from "axios";
-const baseUrl = "http://localhost:3000/api/notes";
+import { BASE_URL } from "../config";
+
+const baseUrl = `${BASE_URL}/notes`;
 
 axios.defaults.withCredentials = true;
 

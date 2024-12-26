@@ -14,7 +14,7 @@ export interface LoginBlockProps extends LoginStateDependentProps {
 
 export interface LogoutBlockProps extends LoginStateDependentProps {
   userToken: UserToken;
-  setUserToken: SetSomething<UserToken>;
+  setUserToken: SetSomething<string>;
 }
 
 export interface AddNoteBlockProps {

@@ -3,7 +3,8 @@ import { LoginBlockProps, UserToken } from "../types";
 import axios from "axios";
 import { AxiosResponse } from "axios";
 import { AxiosError } from "axios";
-const baseUrl = "http://localhost:3000/api/user/login";
+import { BASE_URL } from "../config";
+const baseUrl = `${BASE_URL}/user/login`;
 
 axios.defaults.withCredentials = true;
 
