@@ -1,5 +1,4 @@
-import { AddNoteBlockProps } from "../types";
-import { useState } from "react";
+import { EditNoteBlockProps } from "../types";
 import axios from "axios";
 import { AxiosResponse } from "axios";
 import { AxiosError } from "axios";
@@ -9,29 +8,27 @@ axios.defaults.withCredentials = true;
 
 const baseUrl = "http://localhost:3000/api/notes";
 
-export const AddNoteBlock: React.FC<AddNoteBlockProps> = ({ userToken, appendLocalNote, isAddModalOpen, setIsAddModalOpen }) => {
-  const [content, setContent] = useState<string>("");
+export const EditNoteBlock: React.FC<EditNoteBlockProps> = ({updateLocalNote, editorNote, setEditorNote, isEditModalOpen, setIsEditModalOpen}) => {
 
-  const handleAdd = async (event: React.MouseEvent) => {
+  const handleEdit = async (event: React.MouseEvent) => {
     event.preventDefault();
-    const response: AxiosResponse | AxiosError = await axios.post(baseUrl, { content, username: userToken.username }).catch(e => e);
+    const response: AxiosResponse | AxiosError = await axios.put(`${baseUrl}/${editorNote.id}`, editorNote).catch(e => e);
     if (response.status === 201) {
       // console.log(response);
-      appendLocalNote(response.data)
-      setContent("");
-      setIsAddModalOpen(false);
+      updateLocalNote(response.data)
+      handleClose();
     } else {
-      alert("Could not add note.");
+      alert("Could not update note.");
     }
   };
   
   const handleClose = (val = false) => {
-    setContent("");
-    setIsAddModalOpen(val);
+    setEditorNote({id: "", username: "", content: "", created_timestamp: ""});
+    setIsEditModalOpen(val);
   };
 
   return (
-    <Dialog open={isAddModalOpen} onClose={handleClose} className="relative z-10">
+    <Dialog open={isEditModalOpen} onClose={handleClose} className="relative z-10">
       <DialogBackdrop transition className="fixed inset-0 bg-base-300/90 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in" />
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
@@ -43,13 +40,13 @@ export const AddNoteBlock: React.FC<AddNoteBlockProps> = ({ userToken, appendLoc
                     Add note
                   </DialogTitle>
                   <div className="mt-2 w-full">
-                    <textarea name="content" value={content} onChange={e => setContent(e.target.value)} placeholder="note content" className="textarea textarea-bordered textarea-lg w-full" />
+                    <textarea name="content" value={editorNote.content} onChange={e => setEditorNote({...editorNote, content: e.target.value})} placeholder="note content" className="textarea textarea-bordered textarea-lg w-full" />
                   </div>
                 </div>
               </div>
             </div>
             <div className="bg-base-300 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
-              <button className="btn btn-primary btn-sm inline-flex justify-center" onClick={e => { void handleAdd(e) }} >Add</button>
+              <button className="btn btn-primary btn-sm inline-flex justify-center" onClick={e => { void handleEdit(e) }} >Update</button>
               <button onClick={() => handleClose()} className="btn btn-secondary btn-sm inline-flex justify-center">Cancel</button>
             </div>
           </DialogPanel>

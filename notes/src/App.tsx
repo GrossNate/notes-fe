@@ -7,6 +7,7 @@ import { NotesBlock } from './components/NotesBlock';
 import axios, {AxiosResponse, AxiosError} from "axios";
 import { AddNoteBlock } from './components/AddNoteBlock';
 import { useCookies } from 'react-cookie';
+import { EditNoteBlock } from './components/EditNoteBlock';
 
 axios.defaults.withCredentials = true;
 
@@ -16,12 +17,24 @@ function App() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+  const [editorNote, setEditorNote] = useState<Note>({username: "", id: "", content: "", created_timestamp: ""});
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 
   const toggleDarkMode = () => {setDarkMode(!darkMode)};
   
   const appendLocalNote = (noteToAppend: Note) => {
     setNotes(notes.concat(noteToAppend));
   };
+  
+  const updateLocalNote = (noteToUpdate: Note) => {
+    setNotes(notes.map(note => (note.id === noteToUpdate.id) ? noteToUpdate : note));
+  }
+  
+  const showEditor = (noteToEdit: Note) => {
+    setEditorNote(noteToEdit);
+    setIsEditModalOpen(true);
+  }
   
   const deleteLocalNote = (noteIdToDelete: Note["id"]) => {
     setNotes(notes.filter(note => note.id !== noteIdToDelete));
@@ -75,8 +88,9 @@ function App() {
       <div>
         <LoginBlock isLoggedIn={isLoggedIn} />
         <LogoutBlock userToken={cookies} setUserToken={(val) => {setCookie("username", val)}} isLoggedIn={isLoggedIn} />
-        <NotesBlock notes={notes} isLoggedIn={isLoggedIn} deleteLocalNote={deleteLocalNote} />
-        <AddNoteBlock userToken={cookies} appendLocalNote={appendLocalNote} isLoggedIn={isLoggedIn} />
+        <NotesBlock notes={notes} isLoggedIn={isLoggedIn} deleteLocalNote={deleteLocalNote} setIsAddModalOpen={setIsAddModalOpen} showEditor={showEditor}/>
+        <AddNoteBlock userToken={cookies} appendLocalNote={appendLocalNote} isAddModalOpen={isAddModalOpen} setIsAddModalOpen={setIsAddModalOpen} />
+        <EditNoteBlock updateLocalNote={updateLocalNote} editorNote={editorNote} setEditorNote={setEditorNote} isEditModalOpen={isEditModalOpen} setIsEditModalOpen={setIsEditModalOpen} />
       </div>
     </div>
   )

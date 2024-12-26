@@ -2,7 +2,7 @@ import { LogoutBlockProps } from "../types";
 import axios, { AxiosResponse, AxiosError } from "axios";
 const baseUrl = "http://localhost:3000/api/user/logout";
 
-export const LogoutBlock: React.FC<LogoutBlockProps> = ({ userToken, setUserToken, isLoggedIn }) => {
+export const LogoutBlock: React.FC<LogoutBlockProps> = ({ userToken, setUserToken, isLoggedIn, setIsAddModalOpen }) => {
 
   const handleLogout = async (event: React.MouseEvent) => {
     event.preventDefault();
@@ -16,8 +16,8 @@ export const LogoutBlock: React.FC<LogoutBlockProps> = ({ userToken, setUserToke
       <h2 className="flex w-full max-w-xs gap-2">
         <div>{userToken.username}</div>
         <div>
-         <input type="submit" className="btn btn-secondary btn-xs" value="log out" onClick={handleLogout} />
-         </div>
+          <input type="submit" className="btn btn-secondary btn-xs" value="log out" onClick={handleLogout} />
+        </div>
       </h2>
     </div>
   );
