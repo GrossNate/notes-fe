@@ -5,7 +5,6 @@ import { AxiosResponse } from "axios";
 import { AxiosError } from "axios";
 import { BASE_URL } from "../config";
 const baseUrl = `${BASE_URL}/user/login`;
-
 axios.defaults.withCredentials = true;
 
 export const LoginBlock: React.FC<LoginBlockProps> = ({isLoggedIn}) => {

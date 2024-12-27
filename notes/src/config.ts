@@ -1,1 +1,2 @@
-export const BASE_URL = "http://localhost:3000/api"; //"https://notes.is-very.online/api";
+
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
