@@ -36,7 +36,7 @@ export const EditNoteBlock: React.FC<EditNoteBlockProps> = ({ updateLocalNote, e
               <div className="sm:flex sm:items-start">
                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
                   <DialogTitle as="h3" className="text-base font-semibold text-base-content">
-                    Add note
+                    Edit note
                   </DialogTitle>
                   <div className="mt-2 w-full">
                     <textarea name="content" value={editorNote.content} onChange={e => setEditorNote({ ...editorNote, content: e.target.value })} placeholder="note content" className="textarea textarea-bordered textarea-lg w-full" />
